@@ -5,14 +5,14 @@ const LOG_API = "http://4.224.186.213/evaluation-service/logs";
 let AUTH_TOKEN = "";
 
 /**
- * Set token after authentication
+ * Store Bearer Token
  */
 export const setAuthToken = (token: string) => {
   AUTH_TOKEN = token;
 };
 
 /**
- * Reusable logging function
+ * Reusable Logging Function
  */
 export const Log = async (
   stack: "backend" | "frontend",
@@ -39,6 +39,12 @@ export const Log = async (
   message: string
 ) => {
   try {
+
+    if (!AUTH_TOKEN) {
+      console.error("AUTH TOKEN NOT SET");
+      return;
+    }
+
     const response = await axios.post(
       LOG_API,
       {
@@ -49,17 +55,18 @@ export const Log = async (
       },
       {
         headers: {
-          Authorization: `Bearer ${AUTH_TOKEN}`
+          Authorization: `Bearer ${AUTH_TOKEN}`,
+          "Content-Type": "application/json"
         }
       }
     );
 
-    console.log("Log Created:", response.data);
+    console.log("LOG CREATED:", response.data);
 
   } catch (error: any) {
 
     console.error(
-      "Logging Failed:",
+      "LOGGING FAILED:",
       error?.response?.data || error.message
     );
   }
